@@ -1,6 +1,7 @@
 // DOM elements
 const taskInput = document.querySelector(".task-input input");
 const filters = document.querySelectorAll(".filters span");
+const clearAll =  document.querySelector(".clear-btn");
 const taskBox = document.querySelector(".task-box");
 
 let editId;
@@ -22,7 +23,7 @@ function showTodo(filter) {
     todos.forEach((todo, id) => {
       //if todo status is completed, set this isCompleted
         let isCompleted = todo.status == "completed" ? "checked" : "";
-        if(filter == todo.status)
+        if(filter == todo.status || filter == "all")
         {          
           li += `
           <li class="task">
@@ -43,9 +44,10 @@ function showTodo(filter) {
         }
   });
 }
-taskBox.innerHTML = li;
+//displays the text insdie span incase of empty todo list
+taskBox.innerHTML = li || `<spna>You don't have any todo.</spna>`;
 }
-showTodo();
+showTodo("all");
 
 function showMenu(selectedTask)
 {
@@ -64,10 +66,17 @@ function showMenu(selectedTask)
 function deleteTask(deleteId)
 {
   //removing seleted task from array
-  localStorage.setItem("todo-list", JSON.stringify(todos));
   todos.splice(deleteId, 1);
-  showTodo();
+  localStorage.setItem("todo-list", JSON.stringify(todos));
+  showTodo("all");
 }
+
+clearAll.addEventListener("click", () => {
+  //removing all todos from array
+  todos.splice(0, todos.length);
+  localStorage.setItem("todo-list", JSON.stringify(todos));
+  showTodo("all");
+});
 
 function editTask(taskId, taskName)
 {
@@ -118,7 +127,7 @@ taskInput.addEventListener("keyup", (e) => {
     taskInput.value = "";
 
     localStorage.setItem("todo-list", JSON.stringify(todos));
-    showTodo();
+    showTodo("all");
   }
 });
 
